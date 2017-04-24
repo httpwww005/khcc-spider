@@ -92,7 +92,6 @@ class ImgurPipeline(object):
                             config=config, 
                             anon=self.imgur_anonymous)
                 except:
-                    raise
                     logger.debug('sleep %d seconds and retry upload_from_url(): %d' % 
                             (self.imgur_delay, retry_count))
 
