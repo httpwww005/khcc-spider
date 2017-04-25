@@ -86,12 +86,14 @@ class ImgurPipeline(object):
             retry_count = 5
 
             while retry_count > 0:
+                image = None
                 try:
                     image = self.imgur_client.upload_from_url(
                             url=url, 
                             config=config, 
                             anon=self.imgur_anonymous)
-                except:
+                except Exception as e:
+                    logger.debug(e)
                     logger.debug('sleep %d seconds and retry upload_from_url(): %d' % 
                             (self.imgur_delay, retry_count))
 
@@ -104,28 +106,29 @@ class ImgurPipeline(object):
 
                     continue
 
+
+                if image:
+                    logger.debug('image: %s' % image)
+
+                    deletehash = image["deletehash"]
+                    image_id = image["id"]
+                    original_url = item['image_urls'][i]
+
+                    detail = {
+                            "deletehash":deletehash,
+                            "id":image_id,
+                            "original_url":original_url}
+
+                    images.append(detail)
+                    logger.debug('sleep for %d secodes..' % self.imgur_delay)
+
+                    try:
+                        time.sleep(self.imgur_delay)
+                    except:
+                        spider.close_down = True # not work
+
                 break
 
-
-            if(image):
-                logger.debug('image: %s' % image)
-
-                deletehash = image["deletehash"]
-                image_id = image["id"]
-                original_url = item['image_urls'][i]
-
-                detail = {
-                        "deletehash":deletehash,
-                        "id":image_id,
-                        "original_url":original_url}
-
-                images.append(detail)
-                logger.debug('sleep for %d secodes..' % self.imgur_delay)
-
-                try:
-                    time.sleep(self.imgur_delay)
-                except:
-                    spider.close_down = True # not work
 
         del item["image_urls"]
 
