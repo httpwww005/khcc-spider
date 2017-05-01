@@ -56,7 +56,7 @@ def index():
         print("OK", file=sys.stderr)
         return "OK"
     else:
-        return ""
+        return "OK?"
 
 
 port = int(os.environ.get('PORT',5000))
