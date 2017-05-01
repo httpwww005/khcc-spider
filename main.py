@@ -48,15 +48,20 @@ def run_spider():
     save_csv(new_date)
 
 
+@get('/')
+def get_index():
+    return "OK"
+
+
 @post('/')
-def index():
+def post_index():
     body = request.body.read()
     if body == magic_word:
         run_spider()
         print("OK", file=sys.stderr)
         return "OK"
     else:
-        return "OK?"
+        return "NOT OK"
 
 
 port = int(os.environ.get('PORT',5000))
